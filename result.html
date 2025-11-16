@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Health Report</title>
+  <style>
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background-color: #1e1e1e;
+      color: #ffffff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      background: #252526;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .metric-bar {
+      margin: 15px 0;
+    }
+
+    .metric-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: #cccccc;
+    }
+
+    .bar-container {
+      height: 8px;
+      background: #333333;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .bar {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .bar.performance { background: #0098ff; }
+    .bar.security { background: #ff6b00; }
+    .bar.cache { background: #ffd700; }
+
+    .left {
+      width: 60%;
+    }
+
+    .right {
+      width: 35%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #444;
+      margin-bottom: 15px;
+    }
+
+    .section {
+      margin-bottom: 25px;
+    }
+
+    .bar-container {
+      background: #e5e5e5;
+      height: 12px;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .bar {
+      height: 100%;
+      border-radius: 8px;
+    }
+
+    .bar.performance { background: #3da9fc; width: 36%; }
+    .bar.security { background: #f5b800; width: 76%; }
+
+    .info-line {
+      font-size: 14px;
+      margin-top: 5px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .card {
+      background: #111;
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    .card h3 {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .card p {
+      margin: 4px 0;
+      font-size: 15px;
+    }
+
+    .big-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .summary-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 15px;
+      margin-bottom: 5px;
+    }
+
+    .health-score {
+      margin-top: 20px;
+      text-align: right;
+    }
+
+    .health-score p {
+      margin: 3px 0;
+      font-size: 16px;
+    }
+
+    .score {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .download {
+      color: #0073e6;
+      font-size: 13px;
+      text-decoration: none;
+      position: absolute;
+      top: 15px;
+      left: 15px;
+    }
+
+  </style>
+</head>
+{% include '_theme_head.html' %}
+</head>
+<body>
+  {% include '_theme_body.html' %}
+
+  <div class="container">
+    <h2>Summary for {{ result.url }}</h2>
+
+    <div class="metric-bar">
+      <div class="metric-label">
+        <span>Performance</span>
+        <span>{{ result.performance_score }}%</span>
+      </div>
+      <div class="bar-container">
+        <div class="bar performance" style="width: {{ result.performance_score }}%"></div>
+      </div>
+    </div>
+
+    <div class="metric-bar">
+      <div class="metric-label">
+        <span>Security</span>
+        <span>{{ result.security_score }}%</span>
+      </div>
+      <div class="bar-container">
+        <div class="bar security" style="width: {{ result.security_score }}%"></div>
+      </div>
+    </div>
+
+    <div class="metric-bar">
+      <div class="metric-label">
+        <span>Cache</span>
+        <span>{{ result.cache_score }}%</span>
+      </div>
+      <div class="bar-container">
+        <div class="bar cache" style="width: {{ result.cache_score }}%"></div>
+      </div>
+    </div>
+
+    <div class="resource-count">
+      <div class="resource-item">
+        <div class="number">{{ result.scripts }}</div>
+        <div class="label">Scripts</div>
+      </div>
+      <div class="resource-item">
+        <div class="number">{{ result.css_files }}</div>
+        <div class="label">CSS Files</div>
+      </div>
+      <div class="resource-item">
+        <div class="number">{{ result.images }}</div>
+        <div class="label">Images</div>
+      </div>
+    </div>
+
+    <div class="details">
+      <p>Response time: {{ result.response_time }} ms</p>
+      <p>Page size: {{ result.size_kb }} KB</p>
+      <p>HTTPS: {{ 'Yes' if result.https_used else 'No' }}</p>
+      {% if result.server_header %}
+      <p>Server: {{ result.server_header }}</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

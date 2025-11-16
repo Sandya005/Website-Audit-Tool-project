@@ -1,0 +1,40 @@
+<!-- Theme toggle UI and behavior. Include at top of <body>. -->
+<div class="theme-toggle" id="themeToggle" role="button" aria-label="Toggle theme">
+    <span id="themeIcon">🌙</span>
+    <span id="themeLabel">Dark</span>
+</div>
+
+<script>
+    (function(){
+        const toggle = document.getElementById('themeToggle');
+        const icon = document.getElementById('themeIcon');
+        const label = document.getElementById('themeLabel');
+        const THEME_KEY = 'auditt-theme';
+
+        function applyTheme(name){
+            const root = document.documentElement;
+            if(name === 'light'){
+                root.classList.add('light-theme');
+                icon.textContent = '☀️';
+                label.textContent = 'Light';
+            } else {
+                root.classList.remove('light-theme');
+                icon.textContent = '🌙';
+                label.textContent = 'Dark';
+            }
+        }
+
+        // Init from localStorage
+        try{
+            const saved = localStorage.getItem(THEME_KEY) || 'dark';
+            applyTheme(saved);
+        }catch(e){ applyTheme('dark'); }
+
+        toggle.addEventListener('click', function(){
+            const isLight = document.documentElement.classList.contains('light-theme');
+            const next = isLight ? 'dark' : 'light';
+            try{ localStorage.setItem(THEME_KEY, next); }catch(e){}
+            applyTheme(next);
+        });
+    })();
+</script>

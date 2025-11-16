@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboard - Website Audit Tool</title>
+  <link rel="stylesheet" href="/static/style.css">
+    {% include '_theme_head.html' %}
+</head>
+<body>
+      {% include '_theme_body.html' %}
+  <header class="topbar">
+    <div class="container">
+      <h2>Website Audit Tool</h2>
+      <div class="top-actions">
+        <a href="{{ url_for('logout') }}" class="btn small">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash">
+          {% for category, msg in messages %}
+            <div class="flash-{{ category }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <section class="card">
+      <h3>Run Audit</h3>
+      <form method="POST" action="{{ url_for('analyze') }}" class="simple-form">
+        <input type="text" name="url" placeholder="https://example.com or example.com" required>
+        <button type="submit" class="btn">Run Audit</button>
+      </form>
+
+      
+    </section>
+  </main>
+</body>
+</html>

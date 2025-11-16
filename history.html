@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Audit History - Website Audit Tool</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  {% include '_theme_head.html' %}
+</head>
+<body>
+  {% include '_theme_body.html' %}
+  <header class="topbar">
+    <div class="container">
+      <h2>Audit History</h2>
+      <div class="top-actions">
+        <a href="{{ url_for('dashboard') }}" class="btn small">New Audit</a>
+        <a href="{{ url_for('logout') }}" class="btn small">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h3>Historical Analysis for {{ data.url }}</h3>
+      
+      <!-- Score Trends Chart -->
+      <div class="analysis-chart">
+        <canvas id="scoresTrendChart"></canvas>
+      </div>
+      
+      <!-- Individual Score Charts -->
+      <div class="grid" style="margin-top: 24px;">
+        <div class="card-mini">
+          <h4>Security Score Trend</h4>
+          <canvas id="securityTrendChart"></canvas>
+        </div>
+        
+        <div class="card-mini">
+          <h4>Cache Score Trend</h4>
+          <canvas id="cacheTrendChart"></canvas>
+        </div>
+        
+        <div class="card-mini">
+          <h4>Image Score Trend</h4>
+          <canvas id="imageTrendChart"></canvas>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // Format dates for display
+    const dates = {{ data.dates|tojson }}.map(d => {
+      const date = new Date(d);
+      return date.toLocaleDateString();
+    });
+    
+    // Main scores trend chart
+    new Chart(document.getElementById('scoresTrendChart'), {
+      type: 'line',
+      data: {
+        labels: dates,
+        datasets: [
+          {
+            label: 'Overall Score',
+            data: {{ data.total_scores|tojson }},
+            borderColor: '#2196F3',
+            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+            fill: true
+          },
+          {
+            label: 'Security Score',
+            data: {{ data.security_scores|tojson }},
+            borderColor: '#4CAF50',
+            borderDash: [5, 5]
+          },
+          {
+            label: 'Cache Score',
+            data: {{ data.cache_scores|tojson }},
+            borderColor: '#FFC107',
+            borderDash: [5, 5]
+          },
+          {
+            label: 'Image Score',
+            data: {{ data.image_scores|tojson }},
+            borderColor: '#9C27B0',
+            borderDash: [5, 5]
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: {
+            display: true,
+            text: 'Score Trends Over Time'
+          }
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 100
+          }
+        }
+      }
+    });
+
+    // Individual trend mini charts configuration
+    const miniChartConfig = {
+      type: 'line',
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            min: 0,
+            max: 100
+          },
+          x: {
+            display: false
+          }
+        }
+      }
+    };
+
+    // Security Trend
+    new Chart(document.getElementById('securityTrendChart'), {
+      ...miniChartConfig,
+      data: {
+        labels: dates,
+        datasets: [{
+          data: {{ data.security_scores|tojson }},
+          borderColor: '#4CAF50',
+          backgroundColor: 'rgba(76, 175, 80, 0.1)',
+          fill: true
+        }]
+      }
+    });
+
+    // Cache Trend
+    new Chart(document.getElementById('cacheTrendChart'), {
+      ...miniChartConfig,
+      data: {
+        labels: dates,
+        datasets: [{
+          data: {{ data.cache_scores|tojson }},
+          borderColor: '#FFC107',
+          backgroundColor: 'rgba(255, 193, 7, 0.1)',
+          fill: true
+        }]
+      }
+    });
+
+    // Image Trend
+    new Chart(document.getElementById('imageTrendChart'), {
+      ...miniChartConfig,
+      data: {
+        labels: dates,
+        datasets: [{
+          data: {{ data.image_scores|tojson }},
+          borderColor: '#9C27B0',
+          backgroundColor: 'rgba(156, 39, 176, 0.1)',
+          fill: true
+        }]
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Security Analysis - Website Audit Tool</title>
+  <link rel="stylesheet" href="/static/style.css">
+  {% include '_theme_head.html' %}
+</head>
+<body>
+  {% include '_theme_body.html' %}
+  <header class="topbar">
+    <div class="container">
+      <h2>Security Analysis</h2>
+      <div class="top-actions">
+        <a href="{{ url_for('dashboard') }}" class="btn small">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="btn small">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <form method="POST" action="{{ url_for('security') }}" class="simple-form">
+        <input type="text" name="url" placeholder="https://example.com or example.com" required value="{{ request.form.url if request.form.url else '' }}">
+        <button type="submit" class="btn">Run Security Audit</button>
+      </form>
+    </section>
+
+    {% if result %}
+    <section class="card">
+      <h3>Security results for {{ result.url }}</h3>
+      <div class="grid">
+        <div class="card-mini">
+          <h4>Security</h4>
+          <div class="progress-wrap">
+            <div class="progress security" style="--value: {{ result.security_score }}%"></div>
+          </div>
+          <p><strong>{{ result.security_score }}%</strong></p>
+          <p>HTTPS: {{ 'Yes' if result.https_used else 'No' }}</p>
+          <p>Server header: {{ result.server_header or 'Not exposed' }}</p>
+        </div>
+
+        <div class="card-mini">
+          <h4>Headers present</h4>
+          <ul>
+            {% for h in result.present_headers %}
+              <li>{{ h }}</li>
+            {% else %}
+              <li>No common security headers present</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h4>All headers</h4>
+      <table>
+        <thead><tr><th>Header</th><th>Value</th></tr></thead>
+        <tbody>
+          {% for k, v in result.all_headers.items() %}
+            <tr><td>{{ k }}</td><td>{{ v }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>

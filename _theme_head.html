@@ -1,0 +1,52 @@
+<!-- Theme variables (dark by default). Include this in <head>. -->
+<style id="theme-vars">
+    :root {
+        --bg: #131313;
+        --bg-2: #0f1112;
+        --card: #1f2224;
+        --card-2: #191b1c;
+        --muted: #9aa3ac;
+        --text: #e6eef6;
+        --accent-blue: #2e9bf6;
+        --accent-yellow: #ffc94d;
+        --accent-green: #4ade80;
+        --accent-red: #f43f5e;
+        --glass: rgba(255,255,255,0.02);
+    }
+    .light-theme {
+        --bg: #f7f9fb;
+        --bg-2: #ffffff;
+        --card: #ffffff;
+        --card-2: #f1f5f9;
+        --muted: #6b7280;
+        --text: #0f1724;
+        --accent-blue: #2563eb;
+        --accent-yellow: #b45309;
+        --accent-green: #16a34a;
+        --accent-red: #dc2626;
+        --glass: rgba(2,6,23,0.03);
+    }
+    /* Toggle button base styles (can be overridden by page CSS) */
+    .theme-toggle {
+        position: fixed;
+        right: 18px;
+        top: 14px;
+        z-index: 1001;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(0,0,0,0.25);
+        color: white;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 13px;
+        cursor: pointer;
+        backdrop-filter: blur(6px);
+        border: 1px solid rgba(255,255,255,0.06);
+    }
+    .light-theme .theme-toggle {
+        background: rgba(255,255,255,0.9);
+        color: var(--text);
+        border: 1px solid rgba(0,0,0,0.06);
+    }
+</style>

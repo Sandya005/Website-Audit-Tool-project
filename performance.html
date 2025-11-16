@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Performance Analysis - Website Audit Tool</title>
+  <link rel="stylesheet" href="/static/style.css">
+  {% include '_theme_head.html' %}
+</head>
+<body>
+  {% include '_theme_body.html' %}
+  <header class="topbar">
+    <div class="container">
+      <h2>Performance Analysis</h2>
+      <div class="top-actions">
+        <a href="{{ url_for('dashboard') }}" class="btn small">Dashboard</a>
+        <a href="{{ url_for('logout') }}" class="btn small">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <form method="POST" action="{{ url_for('performance') }}" class="simple-form">
+        <input type="text" name="url" placeholder="https://example.com or example.com" required value="{{ request.form.url if request.form.url else '' }}">
+        <button type="submit" class="btn">Run Performance Audit</button>
+      </form>
+    </section>
+
+    {% if result %}
+    <section class="card">
+      <h3>Performance results for {{ result.url }}</h3>
+      <div class="grid">
+        <div class="card-mini">
+          <h4>Performance</h4>
+          <div class="progress-wrap">
+            <div class="progress" style="--value: {{ result.performance_score }}%"></div>
+          </div>
+          <p><strong>{{ result.performance_score }}%</strong></p>
+          <p>Response time: {{ result.response_time }} s</p>
+          <p>Page size: {{ result.size_kb }} KB</p>
+        </div>
+
+        <div class="card-mini">
+          <h4>Resources</h4>
+          <p>Images: {{ result.images }}</p>
+          <p>Scripts: {{ result.scripts }}</p>
+          <p>CSS files: {{ result.css_files }}</p>
+        </div>
+      </div>
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Performance Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Use theme variables from _theme_head.html (no local :root needed) */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(180deg,var(--card),var(--card-2));
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card h3 {
+            color: var(--muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .score-card {
+            background: linear-gradient(180deg,var(--card),var(--card-2));
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .metric {
+            margin-bottom: 2rem;
+        }
+
+        .metric:last-child {
+            margin-bottom: 0;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .metric-value {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-fill.performance {
+            background: var(--accent-blue);
+        }
+
+        .progress-fill.security {
+            background: var(--accent-yellow);
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .detail-card {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .detail-card h3 {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+    {% include '_theme_head.html' %}
+    </head>
+    <body>
+        {% include '_theme_body.html' %}
+    <div class="container">
+        <header class="dashboard-header">
+            <h1>Website Performance Dashboard</h1>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Performance Results</h3>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">1.73s</div>
+                        <div class="stat-label">Load Time</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">Images</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">8</div>
+                        <div class="stat-label">Scripts</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <h3>Security Results</h3>
+                <div class="stat-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">Yes</div>
+                        <div class="stat-label">HTTPS</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">Valid</div>
+                        <div class="stat-label">SSL</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">6</div>
+                        <div class="stat-label">Headers</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="score-card">
+            <div class="metric">
+                <div class="metric-header">
+                    <span class="metric-title">Performance Score</span>
+                    <span class="metric-value">36%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill performance" style="width: 36%"></div>
+                </div>
+            </div>
+
+            <div class="metric">
+                <div class="metric-header">
+                    <span class="metric-title">Security Score</span>
+                    <span class="metric-value">76%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill security" style="width: 76%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-grid">
+            <div class="detail-card">
+                <h3>Resource Summary</h3>
+                <div class="detail-item">
+                    <span class="detail-label">Page Size</span>
+                    <span class="detail-value">370.54 KB</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Total Resources</span>
+                    <span class="detail-value">24</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">CSS Files</span>
+                    <span class="detail-value">4</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <h3>Security Details</h3>
+                <div class="detail-item">
+                    <span class="detail-label">SSL Certificate</span>
+                    <span class="detail-value">Valid (SHA-256)</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">HSTS</span>
+                    <span class="detail-value">Enabled</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">CSP</span>
+                    <span class="detail-value">Configured</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

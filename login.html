@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Login - Website Audit Tool</title>
+  <link rel="stylesheet" href="/static/style.css">
+  {% include '_theme_head.html' %}
+</head>
+<body>
+  {% include '_theme_body.html' %}
+  <div class="container center-card">
+    <h1>Website Audit Tool</h1>
+
+    <form method="POST" action="/login" class="form-card">
+      <label>Username</label>
+      <input type="text" name="username" required>
+
+      <label>Password</label>
+      <input type="password" name="password" required>
+
+      <button type="submit" class="btn">Login</button>
+    </form>
+
+    <p class="muted">Don't have an account? <a href="/register">Register</a></p>
+  </div>
+</body>
+</html>

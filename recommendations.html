@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Recommendations</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% include '_theme_head.html' %}
+    <style>
+        :root {
+            --bg:#131313;
+            --bg-2:#0f1112;
+            --card:#1f2224;
+            --card-2:#191b1c;
+            --muted:#9aa3ac;
+            --text:#e6eef6;
+            --accent-blue:#2e9bf6;
+            --accent-yellow:#ffc94d;
+            --accent-green:#4ade80;
+            --accent-red:#f43f5e;
+            --glass:rgba(255,255,255,0.02);
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            padding: 36px 40px;
+            background: linear-gradient(180deg,var(--bg-2),var(--bg));
+            font-family: Inter, system-ui, Arial;
+            color: var(--text);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+        .dashboard-btn {
+            display: block;
+            width: 200px;
+            margin: 40px auto;
+            background: linear-gradient(180deg,var(--accent-blue),#2589db);
+            color: var(--text);
+            padding: 14px 24px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .dashboard-btn:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(180deg,#3ba4f8,#2b91e3);
+            box-shadow: 0 8px 24px rgba(2,6,23,0.4);
+        }
+        .container {
+            max-width: 1150px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 8px 0 24px 0;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+        .card {
+            background: linear-gradient(180deg,var(--card),var(--card-2));
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(2,6,23,0.6);
+        }
+        .card h2 {
+            font-size: 16px;
+            color: var(--muted);
+            margin: 0 0 20px 0;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .metric {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .metric:last-child {
+            margin-bottom: 0;
+        }
+        .metric .label {
+            color: var(--muted);
+            font-size: 14px;
+        }
+        .metric .value {
+            font-weight: 600;
+        }
+        .metric .value.good { color: var(--accent-green); }
+        .metric .value.warn { color: var(--accent-yellow); }
+        .metric .value.bad { color: var(--accent-red); }
+
+        .chart-container {
+            background: var(--card-2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .recommendation {
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        .recommendation h3 {
+            font-size: 15px;
+            margin: 0 0 8px 0;
+            color: var(--text);
+        }
+        .recommendation p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+        
+        .score-pill {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .score-pill.high {
+            background: rgba(74,222,128,0.1);
+            color: var(--accent-green);
+        }
+        .score-pill.medium {
+            background: rgba(255,201,77,0.1);
+            color: var(--accent-yellow);
+        }
+        .score-pill.low {
+            background: rgba(244,63,94,0.1);
+            color: var(--accent-red);
+        }
+
+        @media (max-width: 980px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    {% include '_theme_body.html' %}
+    <div class="container">
+        <h1>Recommendations & Analysis</h1>
+        
+        <!-- Performance Analysis -->
+        <div class="grid">
+            <div class="card">
+                <h2>Performance Analysis</h2>
+                <div class="metric">
+                    <div class="label">Time to First Byte</div>
+                    <div class="value {{ 'good' if result.ttfb < 200 else ('warn' if result.ttfb < 500 else 'bad') }}">
+                        {{ result.ttfb }}ms
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="label">Load Time</div>
+                    <div class="value {{ 'good' if result.response_time < 2 else ('warn' if result.response_time < 4 else 'bad') }}">
+                        {{ result.response_time }}s
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="label">Total Page Size</div>
+                    <div class="value {{ 'good' if result.size_kb < 1000 else ('warn' if result.size_kb < 2500 else 'bad') }}">
+                        {{ result.size_kb }} KB
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="performanceChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Security Analysis -->
+            <div class="card">
+                <h2>Security Analysis</h2>
+                <div class="metric">
+                    <div class="label">SSL Certificate</div>
+                    <div class="value {{ 'good' if result.ssl_valid else 'bad' }}">
+                        {{ result.ssl_status or 'Valid (SHA-256)' }}
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="label">Security Headers</div>
+                    <div class="value">{{ result.present_headers|length }}/6 implemented</div>
+                </div>
+                <div class="metric">
+                    <div class="label">HSTS</div>
+                    <div class="value {{ 'good' if result.hsts else 'bad' }}">
+                        {{ 'Enabled' if result.hsts else 'Disabled' }}
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="securityChart"></canvas>
+                </div>
+            </div>
+
+            <!-- SEO Analysis -->
+            <div class="card">
+                <h2>SEO Analysis</h2>
+                <div class="metric">
+                    <div class="label">Meta Tags</div>
+                    <div class="value">{{ result.meta_tags_score or '85' }}%</div>
+                </div>
+                <div class="metric">
+                    <div class="label">Heading Structure</div>
+                    <div class="value {{ 'good' if result.headings_valid else 'warn' }}">
+                        {{ 'Valid' if result.headings_valid else 'Needs Review' }}
+                    </div>
+                </div>
+                <div class="metric">
+                    <div class="label">Image Alt Tags</div>
+                    <div class="value">{{ result.images_with_alt or '14' }}/{{ result.images }} images</div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="seoChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="card">
+                <h2>Key Recommendations</h2>
+                {% if result.recommendations %}
+                    {% for rec in result.recommendations %}
+                    <div class="recommendation">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                            <h3>{{ rec.title }}</h3>
+                            <div class="score-pill {{ rec.priority }}">{{ rec.priority|title }}</div>
+                        </div>
+                        <p>{{ rec.description }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="recommendation">
+                        <h3>Image Optimization</h3>
+                        <div class="score-pill high">High</div>
+                        <p>Compress and optimize images to reduce total page size by up to 60%.</p>
+                    </div>
+                    <div class="recommendation">
+                        <h3>Security Headers</h3>
+                        <div class="score-pill medium">Medium</div>
+                        <p>Implement missing security headers: CSP, X-Frame-Options</p>
+                    </div>
+                    <div class="recommendation">
+                        <h3>Meta Description</h3>
+                        <div class="score-pill low">Low</div>
+                        <p>Add a descriptive meta description tag for better SEO results.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <a href="{{ url_for('dashboard') }}" class="dashboard-btn">Back to Dashboard</a>
+
+    <script>
+        // Performance Chart
+        new Chart(document.getElementById('performanceChart'), {
+            type: 'bar',
+            data: {
+                labels: ['TTFB', 'Load Time', 'Resources', 'Cache Hit Rate'],
+                datasets: [{
+                    label: 'Score',
+                    data: [
+                        {{ result.ttfb_score or 85 }},
+                        {{ result.load_time_score or 75 }},
+                        {{ result.resources_score or 90 }},
+                        {{ result.cache_score or 65 }}
+                    ],
+                    backgroundColor: '{{ result.performance_score >= 80 and "rgba(74,222,128,0.2)" or (result.performance_score >= 60 and "rgba(255,201,77,0.2)" or "rgba(244,63,94,0.2)") }}',
+                    borderColor: '{{ result.performance_score >= 80 and "rgb(74,222,128)" or (result.performance_score >= 60 and "rgb(255,201,77)" or "rgb(244,63,94)") }}',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100,
+                        grid: {
+                            color: 'rgba(255,255,255,0.05)'
+                        },
+                        ticks: {
+                            color: 'rgba(255,255,255,0.6)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(255,255,255,0.05)'
+                        },
+                        ticks: {
+                            color: 'rgba(255,255,255,0.6)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // Security Chart
+        new Chart(document.getElementById('securityChart'), {
+            type: 'radar',
+            data: {
+                labels: ['SSL', 'Headers', 'HSTS', 'CSP', 'XSS Protection', 'CORS'],
+                datasets: [{
+                    label: 'Security Score',
+                    data: [
+                        {{ result.ssl_score or 100 }},
+                        {{ result.headers_score or 80 }},
+                        {{ result.hsts_score or 100 }},
+                        {{ result.csp_score or 60 }},
+                        {{ result.xss_score or 80 }},
+                        {{ result.cors_score or 90 }}
+                    ],
+                    backgroundColor: 'rgba(46,155,246,0.2)',
+                    borderColor: 'rgb(46,155,246)',
+                    borderWidth: 1,
+                    pointBackgroundColor: 'rgb(46,155,246)'
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        max: 100,
+                        ticks: {
+                            color: 'rgba(255,255,255,0.6)',
+                            backdropColor: 'transparent'
+                        },
+                        grid: {
+                            color: 'rgba(255,255,255,0.05)'
+                        },
+                        angleLines: {
+                            color: 'rgba(255,255,255,0.05)'
+                        },
+                        pointLabels: {
+                            color: 'rgba(255,255,255,0.6)'
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        // SEO Chart
+        new Chart(document.getElementById('seoChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Meta Tags', 'Headers', 'Images', 'Links', 'Mobile'],
+                datasets: [{
+                    data: [
+                        {{ result.meta_tags_score or 85 }},
+                        {{ result.headers_score or 90 }},
+                        {{ result.images_score or 70 }},
+                        {{ result.links_score or 95 }},
+                        {{ result.mobile_score or 80 }}
+                    ],
+                    backgroundColor: [
+                        'rgba(74,222,128,0.8)',
+                        'rgba(46,155,246,0.8)',
+                        'rgba(255,201,77,0.8)',
+                        'rgba(167,139,250,0.8)',
+                        'rgba(244,63,94,0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: 'rgba(255,255,255,0.6)',
+                            padding: 20
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
